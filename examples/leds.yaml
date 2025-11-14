@@ -1,0 +1,12 @@
+leds:
+  - name: "status"
+    type: "gpio"
+    gpiochip: "/dev/gpiochip0"
+    line: 17
+    max_brightness: 1
+
+  - name: "backlight"
+    type: "pwm"
+    pwmchip: "/sys/class/pwm/pwmchip0"
+    channel: 0
+    max_brightness: 255

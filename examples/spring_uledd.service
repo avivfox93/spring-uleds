@@ -1,0 +1,13 @@
+[Unit]
+Description=Spring ULED Service daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/spring_uledd
+Restart=always
+RestartSec=5
+User=root
+Group=spring_uled
+
+[Install]
+WantedBy=multi-user.target

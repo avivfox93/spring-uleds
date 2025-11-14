@@ -11,11 +11,17 @@ spring_uledd and spring_uledctl work together to create and manage virtual LED d
 This allows creation of LEDs entirely in userspace without Device Tree, sysfs hacks, or kernel patches.
 
 ✔ Create LEDs dynamically
+
 ✔ Destroy LEDs at runtime
+
 ✔ Control brightness from any application
+
 ✔ Support LED definitions via command-line arguments or YAML files
+
 ✔ Single background daemon using epoll() to monitor all LED brightness changes
+
 ✔ Communication through a UNIX domain socket
+
 
 ## 🧱 Architecture
 ```

@@ -92,10 +92,7 @@ void LEDManager::handle_event(int fd)
     }
 
     led.brightness = val;
-    // std::cout << "[uledd] " << led.name << " brightness -> " << val << "\n";
 
-    // TODO: Implement real GPIO or PWM change here
-    // e.g., using libgpiod for GPIO or sysfs pwm duty_cycle
     led.set_brightness(val);
 }
 
@@ -132,12 +129,33 @@ static int calculate_pwm_duty(const LEDDevice &led, uint32_t brightness, int max
 
 static void set_pwm(LEDDevice &led, uint32_t brightness)
 {
-    int duty = calculate_pwm_duty(led, brightness, led.max_brightness);
-    if (duty < 0) return;
     std::string duty_path =
         led.pwmchip + "/pwm" + std::to_string(led.channel) + "/duty_cycle";
+    std::string enable_path =
+        led.pwmchip + "/pwm" + std::to_string(led.channel) + "/enable";
 
-    std::ofstream f(duty_path);
+    std::ofstream f(enable_path);
+    if (!f.is_open()) {
+        std::cerr << "Cannot find PWM: " << enable_path << "\n";
+        std::string export_path = led.pwmchip + "/export";
+        f.open(export_path);
+        if (!f.is_open()) {
+            std::cerr << "Cannot export PWM: " << export_path << "\n";
+            return;
+        }
+        f << led.channel;
+        f.close();
+        f.open(enable_path);
+        if (!f.is_open()) {
+            std::cerr << "Cannot enable PWM: " << enable_path << "\n";
+            return;
+        }
+    }
+    f << 1;
+    f.close();
+    int duty = calculate_pwm_duty(led, brightness, led.max_brightness);
+    if (duty < 0) return;
+    f.open(duty_path);
     if (!f.is_open()) {
         std::cerr << "Cannot write PWM: " << duty_path << "\n";
         return;
